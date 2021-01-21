@@ -1,7 +1,7 @@
-import { AnimClip } from '../../../anim/anim-clip.js';
-import { AnimEvaluator } from '../../../anim/anim-evaluator.js';
-import { AnimTrack } from '../../../anim/anim-track.js';
-import { DefaultAnimBinder } from '../../../anim/default-anim-binder.js';
+import { AnimClip } from '../../../anim/evaluator/anim-clip.js';
+import { AnimEvaluator } from '../../../anim/evaluator/anim-evaluator.js';
+import { AnimTrack } from '../../../anim/evaluator/anim-track.js';
+import { DefaultAnimBinder } from '../../../anim/binder/default-anim-binder.js';
 
 import { Skeleton } from '../../../animation/skeleton.js';
 
@@ -458,7 +458,13 @@ class AnimationComponent extends Component {
 
     onBeforeRemove() {
         for (var i = 0; i < this.assets.length; i++) {
-            var asset = this.system.app.assets.get(this.assets[i]);
+
+            // this.assets can be an array of pc.Assets or an array of numbers (assetIds)
+            var asset = this.assets[i];
+            if (typeof asset ===  'number') {
+                asset = this.system.app.assets.get(asset);
+            }
+
             if (!asset) continue;
 
             asset.off('change', this.onAssetChanged, this);
@@ -494,7 +500,7 @@ class AnimationComponent extends Component {
         return 0;
     }
 
-    set(currentTime) {
+    set currentTime(currentTime) {
         var data = this.data;
         if (data.skeleton) {
             var skeleton = data.skeleton;

@@ -1,7 +1,7 @@
 import { hashCode } from '../core/hash.js';
 import { Color } from '../core/color.js';
 
-import { CLEARFLAG_COLOR, CLEARFLAG_DEPTH, CLEARFLAG_STENCIL } from '../graphics/graphics.js';
+import { CLEARFLAG_COLOR, CLEARFLAG_DEPTH, CLEARFLAG_STENCIL } from '../graphics/constants.js';
 
 import {
     BLEND_NONE,
@@ -272,6 +272,15 @@ class Layer {
         this._shaderVersion = -1;
         this._version = 0;
         this._lightCube = null;
+    }
+
+    get renderTarget() {
+        return this._renderTarget;
+    }
+
+    set renderTarget(rt) {
+        this._renderTarget = rt;
+        this._dirtyCameras = true;
     }
 
     get enabled() {

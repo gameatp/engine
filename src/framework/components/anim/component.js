@@ -1,16 +1,16 @@
 import { Asset } from '../../../asset/asset.js';
 
-import { AnimEvaluator } from '../../../anim/anim-evaluator.js';
+import { AnimEvaluator } from '../../../anim/evaluator/anim-evaluator.js';
+import { AnimController } from '../../../anim/controller/anim-controller.js';
 
 import { Component } from '../component.js';
 
 import {
     ANIM_PARAMETER_BOOLEAN, ANIM_PARAMETER_FLOAT, ANIM_PARAMETER_INTEGER, ANIM_PARAMETER_TRIGGER, ANIM_STATE_START, ANIM_STATE_END, ANIM_STATE_ANY
-} from './constants.js';
-import { AnimComponentBinder } from './binder.js';
-import { AnimComponentLayer } from './layer.js';
-import { AnimController } from './controller.js';
-import { AnimStateGraph } from './state-graph.js';
+} from '../../../anim/controller/constants.js';
+import { AnimComponentBinder } from './component-binder.js';
+import { AnimComponentLayer } from './component-layer.js';
+import { AnimStateGraph } from '../../../anim/state-graph/anim-state-graph.js';
 
 /**
  * @private
@@ -115,15 +115,18 @@ class AnimComponent extends Component {
                 }
                 var assetId = animationAsset.asset;
                 var asset = this.system.app.assets.get(assetId);
-                if (asset.resource) {
-                    this.assignAnimation(stateName, asset.resource, layer.name);
-                } else {
-                    asset.once('load', function (layerName, stateName) {
-                        return function (asset) {
-                            this.assignAnimation(stateName, asset.resource, layerName);
-                        }.bind(this);
-                    }.bind(this)(layer.name, stateName));
-                    this.system.app.assets.load(asset);
+                // check whether assigned animation asset still exists
+                if (asset) {
+                    if (asset.resource) {
+                        this.assignAnimation(stateName, asset.resource, layer.name);
+                    } else {
+                        asset.once('load', function (layerName, stateName) {
+                            return function (asset) {
+                                this.assignAnimation(stateName, asset.resource, layerName);
+                            }.bind(this);
+                        }.bind(this)(layer.name, stateName));
+                        this.system.app.assets.load(asset);
+                    }
                 }
             }
         }

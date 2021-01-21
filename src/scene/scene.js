@@ -4,7 +4,7 @@ import { EventHandler } from '../core/event-handler.js';
 import { Vec3 } from '../math/vec3.js';
 import { Mat3 } from '../math/mat3.js';
 
-import { CULLFACE_FRONT, PIXELFORMAT_RGBA32F, TEXTURETYPE_RGBM } from '../graphics/graphics.js';
+import { CULLFACE_FRONT, PIXELFORMAT_RGBA32F, TEXTURETYPE_RGBM } from '../graphics/constants.js';
 
 import { BAKE_COLORDIR, FOG_NONE, GAMMA_NONE, GAMMA_SRGBHDR, LAYERID_SKYBOX, LAYERID_WORLD, SHADER_FORWARDHDR, SPECULAR_BLINN, TONEMAP_LINEAR } from './constants.js';
 import { createBox } from './procedural.js';
@@ -335,6 +335,14 @@ class Scene extends EventHandler {
         var prev = this._layers;
         this._layers = layers;
         this.fire("set:layers", prev, layers);
+    }
+
+    get defaultMaterial() {
+        return Material.defaultMaterial;
+    }
+
+    set defaultMaterial(value) {
+        Material.defaultMaterial = value;
     }
 
     applySettings(settings) {
